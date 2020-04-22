@@ -3,8 +3,17 @@
   <ItemGroup>
     <ClCompile Include="src\pch.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\renderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="lib\gsl\GSL.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="src\VertexShader.hlsl" />
+    <FxCompile Include="src\PixelShader.hlsl" />
   </ItemGroup>
 </Project>

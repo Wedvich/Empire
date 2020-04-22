@@ -1,7 +1,16 @@
 Language: Cpp
+
+AlignEscapedNewlinesLeft: true
+BinPackParameters: false
+BreakConstructorInitializersBeforeComma: false
+ColumnLimit: 100
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 2
 DerivePointerAlignment: false
+ExperimentalAutoDetectBinPacking: false
 IndentWidth: 2
 MaxEmptyLinesToKeep: 1
 PointerAlignment: Left
+SpaceBeforeParens: ControlStatements
 TabWidth: 2
 UseTab: Never
