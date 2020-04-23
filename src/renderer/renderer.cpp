@@ -154,26 +154,8 @@ void Renderer::init(HWND hwnd) {
 }
 
 void Renderer::render(TransformComponent* state) {
-
-  XMStoreFloat4x4(&m_constantBufferData.world,
-                  XMMatrixRotationRollPitchYaw(XMConvertToRadians(state->rotation.x),
-                                               XMConvertToRadians(state->rotation.y),
-                                               XMConvertToRadians(state->rotation.z)));
-
-  XMVECTOR eye = XMLoadFloat3(&m_camera->m_eye);
-  XMVECTOR at  = XMLoadFloat3(&m_camera->m_at);
-  XMVECTOR up  = XMLoadFloat3(&m_camera->m_up);
-
-  XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixLookAtRH(eye, at, up));
-
-  m_context->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &m_constantBufferData, 0, 0);
-
-  const FLOAT clearColor[] = {0.25f, 0.5f, 0.75f, 1.0f};
-  m_context->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
-  m_context->ClearDepthStencilView(m_depthStencilView.Get(),
-                                   D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-  m_context->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+  clear();
+  updateViewMatrix(state);
 
   UINT stride = sizeof(VertexPositionColor);
   UINT offset = 0;
@@ -191,4 +173,28 @@ void Renderer::render(TransformComponent* state) {
   m_context->DrawIndexed(m_indexCount, 0, 0);
 
   m_swapChain->Present(0, m_tearingSupport ? DXGI_PRESENT_ALLOW_TEARING : 0);
+}
+
+void Renderer::clear() {
+  const FLOAT clearColor[] = {0.25f, 0.5f, 0.75f, 1.0f};
+  m_context->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
+  m_context->ClearDepthStencilView(m_depthStencilView.Get(),
+                                   D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+  m_context->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+}
+
+void Renderer::updateViewMatrix(TransformComponent* transform) {
+  XMStoreFloat4x4(&m_constantBufferData.world,
+                  XMMatrixRotationRollPitchYaw(XMConvertToRadians(transform->rotation.x),
+                                               XMConvertToRadians(transform->rotation.y),
+                                               XMConvertToRadians(transform->rotation.z)));
+
+  XMVECTOR eye = XMLoadFloat3(&m_camera->m_eye);
+  XMVECTOR at  = XMLoadFloat3(&m_camera->m_at);
+  XMVECTOR up  = XMLoadFloat3(&m_camera->m_up);
+
+  XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixLookAtRH(eye, at, up));
+
+  m_context->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &m_constantBufferData, 0, 0);
 }
