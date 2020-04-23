@@ -119,10 +119,11 @@
     <ClInclude Include="src\entities\entity.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\cube.h" />
+    <ClInclude Include="src\input_state.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\renderer\camera.h" />
     <ClInclude Include="src\renderer\renderer.h" />
     <ClInclude Include="src\game_window.h" />
-    <ClInclude Include="src\renderer\render_object.h" />
     <ClInclude Include="src\systems\system.h" />
     <ClInclude Include="src\world.h" />
   </ItemGroup>

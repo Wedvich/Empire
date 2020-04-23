@@ -94,11 +94,7 @@ void Renderer::init(HWND hwnd) {
   CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ConstantBufferData), D3D11_BIND_CONSTANT_BUFFER);
   m_device->CreateBuffer(&constantBufferDesc, nullptr, m_constantBuffer.GetAddressOf());
 
-  XMVECTOR eye = XMVectorSet(0.0f, 0.7f, 1.5f, 0.f);
-  XMVECTOR at  = XMVectorSet(0.0f, -0.1f, 0.0f, 0.f);
-  XMVECTOR up  = XMVectorSet(0.0f, 1.0f, 0.0f, 0.f);
-
-  XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
+  m_camera = std::make_unique<Camera>();
 
   const auto aspectRatio = static_cast<float>(m_outputWidth) / static_cast<float>(m_outputHeight);
   XMStoreFloat4x4(&m_constantBufferData.projection,
@@ -159,10 +155,17 @@ void Renderer::init(HWND hwnd) {
 }
 
 void Renderer::render(TransformComponent* state) {
+
   XMStoreFloat4x4(&m_constantBufferData.world,
                   XMMatrixTranspose(XMMatrixRotationRollPitchYaw(
                       XMConvertToRadians(state->rotation.x), XMConvertToRadians(state->rotation.y),
                       XMConvertToRadians(state->rotation.z))));
+
+  XMVECTOR eye = XMLoadFloat3(&m_camera->m_eye);
+  XMVECTOR at  = XMLoadFloat3(&m_camera->m_at);
+  XMVECTOR up  = XMLoadFloat3(&m_camera->m_up);
+
+  XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
 
   m_context->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &m_constantBufferData, 0, 0);
 

@@ -5,7 +5,6 @@
 
 #include <algorithm>
 #include <gsl/gsl>
-#include <math.h>
 #include <map>
 #include <stdexcept>
 #include <wrl/client.h>

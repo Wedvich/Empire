@@ -18,9 +18,10 @@
     <ClInclude Include="src\systems\system.h" />
     <ClInclude Include="src\components\component.h" />
     <ClInclude Include="src\renderer\renderer.h" />
-    <ClInclude Include="src\renderer\render_object.h" />
     <ClInclude Include="src\entities\entity.h" />
     <ClInclude Include="src\components\transform.h" />
+    <ClInclude Include="src\renderer\camera.h" />
+    <ClInclude Include="src\input_state.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="lib\gsl\GSL.natvis" />

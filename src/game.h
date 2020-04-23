@@ -1,9 +1,11 @@
 #pragma once
 
+#include "components/transform.h"
 #include "game_window.h"
 #include "renderer/renderer.h"
 #include "world.h"
-#include "components/transform.h"
+#include "input_state.h"
+#include <input_state.h>
 
 class Game {
 public:
@@ -12,6 +14,7 @@ public:
 private:
   GameWindow m_window;
   Renderer   m_renderer;
+  InputState m_inputState;
 
   std::unique_ptr<World> m_world;
 
@@ -21,6 +24,7 @@ private:
   float         m_cubeState     = 0.0f;
 
   TransformComponent m_cubeTransform = {};
+  float              m_cameraAngle   = 0.0f;
 
   void init();
   void tick();

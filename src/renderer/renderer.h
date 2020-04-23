@@ -3,12 +3,13 @@
 #include "constants.h"
 #include "cube.h"
 #include "components/transform.h"
-#include "render_object.h"
+#include "camera.h"
 
 class Renderer {
 public:
   void init(HWND hwnd);
   void render(TransformComponent* state);
+  Camera* getCamera() const { return m_camera.get(); }
 
 private:
   HWND    m_hwnd           = nullptr;
@@ -49,5 +50,5 @@ private:
   ComPtr<ID3D11PixelShader>  m_pixelShader;
   ComPtr<ID3D11Buffer>       m_constantBuffer;
 
-  std::vector<std::unique_ptr<RenderObject>> m_renderObjects;
+  std::unique_ptr<Camera> m_camera;
 };

@@ -1,6 +1,6 @@
 #include "game.h"
-#include "renderer/renderer.h"
 #include "constants.h"
+#include "renderer/renderer.h"
 
 void Game::run() {
   init();
@@ -47,11 +47,50 @@ void Game::tick() {
   while (frameTime > 0.0) {
     float deltaTime = std::min(frameTime, c_timestep);
 
-#pragma region TODO : Move to system
-    m_cubeTransform.rotation.x = fmod(m_cubeTransform.rotation.x + 90 * deltaTime, 360.0f);
-    m_cubeTransform.rotation.y = fmod(m_cubeTransform.rotation.y + 60 * deltaTime, 360.0f);
-    m_cubeTransform.rotation.z = fmod(m_cubeTransform.rotation.z + 45 * deltaTime, 360.0f);
+#pragma region TODO : Move to systems
+    m_cubeTransform.rotation.y = std::fmod(m_cubeTransform.rotation.y + 45 * deltaTime, 360.0f);
 #pragma endregion
+
+#pragma region TODO : Move to systems
+    auto camera = m_renderer.getCamera();
+    if (m_inputState.R) {
+      camera->m_eye = {0.0f, 0.7f, 1.5f};
+      camera->m_at  = {0.0f, 0.1f, 0.0f};
+    }
+
+    if (m_inputState.A) {
+      camera->m_eye.x -= 2.0f * deltaTime;
+      camera->m_at.x -= 2.0f * deltaTime;
+    }
+
+    if (m_inputState.D) {
+      camera->m_eye.x += 2.0f * deltaTime;
+      camera->m_at.x += 2.0f * deltaTime;
+    }
+
+    if (!m_inputState.Shift) {
+      if (m_inputState.W) {
+        camera->m_eye.z -= 2.0f * deltaTime;
+        camera->m_at.z -= 2.0f * deltaTime;
+      }
+
+      if (m_inputState.S) {
+        camera->m_eye.z += 2.0f * deltaTime;
+        camera->m_at.z += 2.0f * deltaTime;
+      }
+    } else {
+      if (m_inputState.W) {
+        camera->m_eye.y += 2.0f * deltaTime;
+        camera->m_at.y += 2.0f * deltaTime;
+      }
+
+      if (m_inputState.S) {
+        camera->m_eye.y -= 2.0f * deltaTime;
+        camera->m_at.y -= 2.0f * deltaTime;
+      }
+    }
+#pragma endregion
+
     m_world->update(deltaTime);
 
     frameTime -= deltaTime;
@@ -89,6 +128,56 @@ LRESULT Game::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam
       KillTimer(handle, c_sizeMoveTimerId);
       // TODO: GetClientRect and resize
       // if (game) {}
+      break;
+
+    case WM_KEYDOWN:
+      if (game) {
+        switch (wParam) {
+          case VK_SHIFT:
+            game->m_inputState.Shift = true;
+            break;
+          case 0x57:
+            game->m_inputState.W = true;
+            break;
+          case 0x41:
+            game->m_inputState.A = true;
+            break;
+          case 0x53:
+            game->m_inputState.S = true;
+            break;
+          case 0x44:
+            game->m_inputState.D = true;
+            break;
+          case 0x52:
+            game->m_inputState.R = true;
+            break;
+        }
+      }
+      break;
+
+    case WM_KEYUP:
+      if (game) {
+        switch (wParam) {
+          case VK_SHIFT:
+            game->m_inputState.Shift = false;
+            break;
+          case 0x57:
+            game->m_inputState.W = false;
+            break;
+          case 0x41:
+            game->m_inputState.A = false;
+            break;
+          case 0x53:
+            game->m_inputState.S = false;
+            break;
+          case 0x44:
+            game->m_inputState.D = false;
+            break;
+          case 0x52:
+            game->m_inputState.R = false;
+            break;
+        }
+      }
       break;
 
     case WM_TIMER:
