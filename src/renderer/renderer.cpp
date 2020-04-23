@@ -155,7 +155,15 @@ void Renderer::init(HWND hwnd) {
 
 void Renderer::render(TransformComponent* state) {
   clear();
-  updateViewMatrix(state);
+
+  // Move transformed object
+  // TODO: Split constant buffers
+  XMStoreFloat4x4(&m_constantBufferData.world,
+                  XMMatrixRotationRollPitchYaw(XMConvertToRadians(state->rotation.x),
+                                               XMConvertToRadians(state->rotation.y),
+                                               XMConvertToRadians(state->rotation.z)));
+
+  updateViewMatrix();
 
   UINT stride = sizeof(VertexPositionColor);
   UINT offset = 0;
@@ -184,12 +192,7 @@ void Renderer::clear() {
   m_context->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 }
 
-void Renderer::updateViewMatrix(TransformComponent* transform) {
-  XMStoreFloat4x4(&m_constantBufferData.world,
-                  XMMatrixRotationRollPitchYaw(XMConvertToRadians(transform->rotation.x),
-                                               XMConvertToRadians(transform->rotation.y),
-                                               XMConvertToRadians(transform->rotation.z)));
-
+void Renderer::updateViewMatrix() {
   XMVECTOR eye = XMLoadFloat3(&m_camera->m_eye);
   XMVECTOR at  = XMLoadFloat3(&m_camera->m_at);
   XMVECTOR up  = XMLoadFloat3(&m_camera->m_up);

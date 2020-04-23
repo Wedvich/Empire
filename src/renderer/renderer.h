@@ -53,5 +53,5 @@ private:
   std::unique_ptr<Camera> m_camera;
 
   void clear();
-  void updateViewMatrix(TransformComponent* transform);
+  void updateViewMatrix();
 };
