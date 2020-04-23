@@ -1,5 +1,6 @@
 #include "game.h"
-#include "renderer.h"
+#include "renderer/renderer.h"
+#include "constants.h"
 
 void Game::run() {
   init();
@@ -28,20 +29,36 @@ void Game::init() {
   m_tickFrequency = gsl::narrow<float>(frequency.QuadPart);
 
   QueryPerformanceCounter(&m_currentTime);
+
+  m_world = std::make_unique<World>();
+  m_world->init();
 }
 
 void Game::tick() {
+  // TODO: Update input state
+
   LARGE_INTEGER newTime{};
   QueryPerformanceCounter(&newTime);
+  const auto ticks = gsl::narrow_cast<float>(newTime.QuadPart - m_currentTime.QuadPart);
+  m_currentTime    = newTime;
 
-  const auto deltaTicks = gsl::narrow_cast<float>(newTime.QuadPart - m_currentTime.QuadPart);
-  const auto deltaTime  = std::min(deltaTicks / m_tickFrequency, 1.0f);
-  m_currentTime         = newTime;
+  auto frameTime = ticks / m_tickFrequency;
 
-  m_state += 90 * deltaTime;
-  m_state = fmod(m_state, 360.0f);
+  while (frameTime > 0.0) {
+    float deltaTime = std::min(frameTime, c_timestep);
 
-  m_renderer.render(m_state);
+#pragma region TODO : Move to system
+    m_cubeTransform.rotation.x = fmod(m_cubeTransform.rotation.x + 90 * deltaTime, 360.0f);
+    m_cubeTransform.rotation.y = fmod(m_cubeTransform.rotation.y + 60 * deltaTime, 360.0f);
+    m_cubeTransform.rotation.z = fmod(m_cubeTransform.rotation.z + 45 * deltaTime, 360.0f);
+#pragma endregion
+    m_world->update(deltaTime);
+
+    frameTime -= deltaTime;
+    m_elapsedTime += deltaTime;
+  }
+
+  m_renderer.render(&m_cubeTransform);
 }
 
 LRESULT Game::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) {

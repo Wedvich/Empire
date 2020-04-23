@@ -15,10 +15,10 @@ void Renderer::init(HWND hwnd) {
   ThrowIfFailed(dxgiFactory.As(&m_dxgiFactory));
 
   {
-    BOOL allowTearing = FALSE;
-    const auto hr = m_dxgiFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING,
+    BOOL       allowTearing = FALSE;
+    const auto hr           = m_dxgiFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING,
                                                        &allowTearing, sizeof(allowTearing));
-    m_tearingSupport = SUCCEEDED(hr) && allowTearing;
+    m_tearingSupport        = SUCCEEDED(hr) && allowTearing;
   }
 
   m_dxgiFactory->EnumAdapters1(0, m_dxgiAdapter.GetAddressOf());
@@ -30,7 +30,7 @@ void Renderer::init(HWND hwnd) {
   deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-  ComPtr<ID3D11Device> device;
+  ComPtr<ID3D11Device>        device;
   ComPtr<ID3D11DeviceContext> context;
 
   ThrowIfFailed(D3D11CreateDevice(m_dxgiAdapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, nullptr,
@@ -45,15 +45,15 @@ void Renderer::init(HWND hwnd) {
   context.As(&m_context);
 
   DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-  swapChainDesc.BufferCount = 2;
-  swapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-  swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-  swapChainDesc.SampleDesc.Count = 1;
+  swapChainDesc.BufferCount        = 2;
+  swapChainDesc.Format             = DXGI_FORMAT_B8G8R8A8_UNORM;
+  swapChainDesc.BufferUsage        = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+  swapChainDesc.SampleDesc.Count   = 1;
   swapChainDesc.SampleDesc.Quality = 0;
-  swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
-  swapChainDesc.Flags = m_tearingSupport ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
-  swapChainDesc.Width = gsl::narrow_cast<UINT>(m_outputWidth);
-  swapChainDesc.Height = gsl::narrow_cast<UINT>(m_outputHeight);
+  swapChainDesc.SwapEffect         = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+  swapChainDesc.Flags              = m_tearingSupport ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+  swapChainDesc.Width              = gsl::narrow_cast<UINT>(m_outputWidth);
+  swapChainDesc.Height             = gsl::narrow_cast<UINT>(m_outputHeight);
 
   DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullscreenSwapChainDesc{};
   fullscreenSwapChainDesc.Windowed = TRUE;
@@ -85,8 +85,8 @@ void Renderer::init(HWND hwnd) {
                                                  m_depthStencilView.ReleaseAndGetAddressOf()));
 
   ZeroMemory(&m_viewport, sizeof(D3D11_VIEWPORT));
-  m_viewport.Width = static_cast<FLOAT>(m_backBufferDesc.Width);
-  m_viewport.Height = static_cast<FLOAT>(m_backBufferDesc.Height);
+  m_viewport.Width    = static_cast<FLOAT>(m_backBufferDesc.Width);
+  m_viewport.Height   = static_cast<FLOAT>(m_backBufferDesc.Height);
   m_viewport.MinDepth = 0;
   m_viewport.MaxDepth = 1;
   m_context->RSSetViewports(1, &m_viewport);
@@ -95,8 +95,8 @@ void Renderer::init(HWND hwnd) {
   m_device->CreateBuffer(&constantBufferDesc, nullptr, m_constantBuffer.GetAddressOf());
 
   XMVECTOR eye = XMVectorSet(0.0f, 0.7f, 1.5f, 0.f);
-  XMVECTOR at = XMVectorSet(0.0f, -0.1f, 0.0f, 0.f);
-  XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.f);
+  XMVECTOR at  = XMVectorSet(0.0f, -0.1f, 0.0f, 0.f);
+  XMVECTOR up  = XMVectorSet(0.0f, 1.0f, 0.0f, 0.f);
 
   XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixTranspose(XMMatrixLookAtRH(eye, at, up)));
 
@@ -107,7 +107,7 @@ void Renderer::init(HWND hwnd) {
 
   Cube cube{};
 
-  CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(cube.vertices), D3D11_BIND_VERTEX_BUFFER);
+  CD3D11_BUFFER_DESC     vertexBufferDesc(sizeof(cube.vertices), D3D11_BIND_VERTEX_BUFFER);
   D3D11_SUBRESOURCE_DATA vertexData{};
   vertexData.pSysMem = cube.vertices;
 
@@ -125,9 +125,9 @@ void Renderer::init(HWND hwnd) {
   FILE* vertexShader;
   BYTE* bytes;
 
-  size_t destSize = 65536;
+  size_t destSize  = 65536;
   size_t bytesRead = 0;
-  bytes = new BYTE[destSize];
+  bytes            = new BYTE[destSize];
 
   fopen_s(&vertexShader, "VertexShader.cso", "rb");
   bytesRead = fread_s(bytes, destSize, 1, 65536, vertexShader);
@@ -147,7 +147,7 @@ void Renderer::init(HWND hwnd) {
   FILE* pixelShader;
   delete bytes;
 
-  bytes = new BYTE[destSize];
+  bytes     = new BYTE[destSize];
   bytesRead = 0;
   fopen_s(&pixelShader, "PixelShader.cso", "rb");
   bytesRead = fread_s(bytes, destSize, 1, 65536, pixelShader);
@@ -158,9 +158,11 @@ void Renderer::init(HWND hwnd) {
   fclose(pixelShader);
 }
 
-void Renderer::render(float state) {
+void Renderer::render(TransformComponent* state) {
   XMStoreFloat4x4(&m_constantBufferData.world,
-                  XMMatrixTranspose(XMMatrixRotationY(XMConvertToRadians(state))));
+                  XMMatrixTranspose(XMMatrixRotationRollPitchYaw(
+                      XMConvertToRadians(state->rotation.x), XMConvertToRadians(state->rotation.y),
+                      XMConvertToRadians(state->rotation.z))));
 
   m_context->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &m_constantBufferData, 0, 0);
 

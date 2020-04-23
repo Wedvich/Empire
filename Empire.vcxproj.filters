@@ -3,17 +3,24 @@
   <ItemGroup>
     <ClCompile Include="src\pch.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_window.cpp" />
+    <ClCompile Include="src\world.cpp" />
+    <ClCompile Include="src\renderer\renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\renderer.h" />
     <ClInclude Include="src\cube.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\game_window.h" />
     <ClInclude Include="src\constants.h" />
+    <ClInclude Include="src\world.h" />
+    <ClInclude Include="src\systems\system.h" />
+    <ClInclude Include="src\components\component.h" />
+    <ClInclude Include="src\renderer\renderer.h" />
+    <ClInclude Include="src\renderer\render_object.h" />
+    <ClInclude Include="src\entities\entity.h" />
+    <ClInclude Include="src\components\transform.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="lib\gsl\GSL.natvis" />

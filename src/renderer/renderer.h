@@ -2,11 +2,13 @@
 
 #include "constants.h"
 #include "cube.h"
+#include "components/transform.h"
+#include "render_object.h"
 
 class Renderer {
 public:
   void init(HWND hwnd);
-  void render(float state);
+  void render(TransformComponent* state);
 
 private:
   HWND    m_hwnd           = nullptr;
@@ -36,12 +38,6 @@ private:
   static_assert((sizeof(ConstantBufferData) % 16) == 0,
                 "Constant Buffer size must be 16-byte aligned");
 
-  typedef struct VertexPositionColorTangent_ {
-    DirectX::XMFLOAT3 position;
-    DirectX::XMFLOAT3 normal;
-    DirectX::XMFLOAT3 tangent;
-  } VertexPositionColorTangent;
-
   ConstantBufferData m_constantBufferData = {};
   unsigned int       m_indexCount         = 0;
 
@@ -52,4 +48,6 @@ private:
   ComPtr<ID3D11InputLayout>  m_inputLayoutExtended;
   ComPtr<ID3D11PixelShader>  m_pixelShader;
   ComPtr<ID3D11Buffer>       m_constantBuffer;
+
+  std::vector<std::unique_ptr<RenderObject>> m_renderObjects;
 };
