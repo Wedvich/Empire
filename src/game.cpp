@@ -120,6 +120,9 @@ LRESULT Game::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam
 
     case WM_ENTERSIZEMOVE:
       s_inSizeMove = true;
+      if (game) {
+        game->m_inputState.reset();
+      }
       SetTimer(handle, c_sizeMoveTimerId, USER_TIMER_MINIMUM, nullptr);
       break;
 

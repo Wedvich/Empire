@@ -7,6 +7,7 @@
     <ClCompile Include="src\game_window.cpp" />
     <ClCompile Include="src\world.cpp" />
     <ClCompile Include="src\renderer\renderer.cpp" />
+    <ClCompile Include="src\input_state.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />

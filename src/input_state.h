@@ -10,4 +10,6 @@ public:
   bool D     = false;
   bool R     = false;
   bool Shift = false;
+
+  void reset();
 };
