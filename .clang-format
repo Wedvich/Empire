@@ -8,6 +8,7 @@ ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 2
 DerivePointerAlignment: false
 ExperimentalAutoDetectBinPacking: false
+IndentCaseLabels: true
 IndentWidth: 2
 MaxEmptyLinesToKeep: 1
 PointerAlignment: Left

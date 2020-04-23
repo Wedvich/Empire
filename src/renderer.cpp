@@ -33,8 +33,8 @@ void Renderer::init(HWND hwnd) {
   ComPtr<ID3D11Device> device;
   ComPtr<ID3D11DeviceContext> context;
 
-  ThrowIfFailed(D3D11CreateDevice(m_dxgiAdapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, nullptr, deviceFlags,
-                                  levels, _countof(levels), D3D11_SDK_VERSION, &device,
+  ThrowIfFailed(D3D11CreateDevice(m_dxgiAdapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, nullptr,
+                                  deviceFlags, levels, _countof(levels), D3D11_SDK_VERSION, &device,
                                   &m_featureLevel, &context));
 
   ComPtr<IDXGIDevice1> dxgiDevice;
@@ -91,8 +91,6 @@ void Renderer::init(HWND hwnd) {
   m_viewport.MaxDepth = 1;
   m_context->RSSetViewports(1, &m_viewport);
 
-  // TODO: Create vertex and pixel shaders
-
   CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ConstantBufferData), D3D11_BIND_CONSTANT_BUFFER);
   m_device->CreateBuffer(&constantBufferDesc, nullptr, m_constantBuffer.GetAddressOf());
 
@@ -107,77 +105,20 @@ void Renderer::init(HWND hwnd) {
                   XMMatrixTranspose(XMMatrixPerspectiveFovRH(XMConvertToRadians(70), aspectRatio,
                                                              0.01f, 100.0f)));
 
-  VertexPositionColor CubeVertices[] = {
-      {
-          XMFLOAT3(-0.5f, -0.5f, -0.5f),
-          XMFLOAT3(0, 0, 0),
-      },
-      {
-          XMFLOAT3(-0.5f, -0.5f, 0.5f),
-          XMFLOAT3(0, 0, 1),
-      },
-      {
-          XMFLOAT3(-0.5f, 0.5f, -0.5f),
-          XMFLOAT3(0, 1, 0),
-      },
-      {
-          XMFLOAT3(-0.5f, 0.5f, 0.5f),
-          XMFLOAT3(0, 1, 1),
-      },
+  Cube cube{};
 
-      {
-          XMFLOAT3(0.5f, -0.5f, -0.5f),
-          XMFLOAT3(1, 0, 0),
-      },
-      {
-          XMFLOAT3(0.5f, -0.5f, 0.5f),
-          XMFLOAT3(1, 0, 1),
-      },
-      {
-          XMFLOAT3(0.5f, 0.5f, -0.5f),
-          XMFLOAT3(1, 1, 0),
-      },
-      {
-          XMFLOAT3(0.5f, 0.5f, 0.5f),
-          XMFLOAT3(1, 1, 1),
-      },
-  };
-
-  CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(CubeVertices), D3D11_BIND_VERTEX_BUFFER);
+  CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(cube.vertices), D3D11_BIND_VERTEX_BUFFER);
   D3D11_SUBRESOURCE_DATA vertexData{};
-  vertexData.pSysMem = CubeVertices;
+  vertexData.pSysMem = cube.vertices;
 
   ThrowIfFailed(m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer));
 
-  unsigned short CubeIndices[] = {
-      0, 2, 1, // -x
-      1, 2, 3,
+  m_indexCount = _countof(cube.indices);
 
-      4, 5, 6, // +x
-      5, 7, 6,
+  CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cube.indices), D3D11_BIND_INDEX_BUFFER);
 
-      0, 1, 5, // -y
-      0, 5, 4,
-
-      2, 6, 7, // +y
-      2, 7, 3,
-
-      0, 4, 6, // -z
-      0, 6, 2,
-
-      1, 3, 7, // +z
-      1, 7, 5,
-  };
-
-  m_indexCount = _countof(CubeIndices);
-
-  CD3D11_BUFFER_DESC indexBufferDesc(sizeof(CubeIndices), D3D11_BIND_INDEX_BUFFER);
-
-  D3D11_SUBRESOURCE_DATA indexData;
-  ZeroMemory(&indexData, sizeof(D3D11_SUBRESOURCE_DATA));
-  indexData.pSysMem = CubeIndices;
-  indexData.SysMemPitch = 0;
-  indexData.SysMemSlicePitch = 0;
+  D3D11_SUBRESOURCE_DATA indexData{};
+  indexData.pSysMem = cube.indices;
 
   ThrowIfFailed(device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer));
 
@@ -217,12 +158,10 @@ void Renderer::init(HWND hwnd) {
   fclose(pixelShader);
 }
 
-void Renderer::render() {
+void Renderer::render(float state) {
   XMStoreFloat4x4(&m_constantBufferData.world,
-                  XMMatrixTranspose(XMMatrixRotationY(XMConvertToRadians((float)m_frameCount++))));
+                  XMMatrixTranspose(XMMatrixRotationY(XMConvertToRadians(state))));
 
-  if (m_frameCount == MAXUINT)
-    m_frameCount = 0;
   m_context->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &m_constantBufferData, 0, 0);
 
   const FLOAT clearColor[] = {0.25f, 0.5f, 0.75f, 1.0f};

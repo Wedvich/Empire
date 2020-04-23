@@ -4,10 +4,16 @@
     <ClCompile Include="src\pch.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\renderer.cpp" />
+    <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\game_window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\renderer.h" />
+    <ClInclude Include="src\cube.h" />
+    <ClInclude Include="src\game.h" />
+    <ClInclude Include="src\game_window.h" />
+    <ClInclude Include="src\constants.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="lib\gsl\GSL.natvis" />

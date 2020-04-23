@@ -1,21 +1,25 @@
 #pragma once
 
+#include "cube.h"
+
+constexpr auto DEFAULT_WIDTH = 1024;
+constexpr auto DEFAULT_HEIGHT = 768;
+
 class Renderer {
 public:
   Renderer()
     : m_hwnd{nullptr},
       m_featureLevel{D3D_FEATURE_LEVEL_11_1},
-      m_outputWidth{1024},
-      m_outputHeight{768},
+      m_outputWidth{DEFAULT_WIDTH},
+      m_outputHeight{DEFAULT_HEIGHT},
       m_tearingSupport{false},
       m_backBufferDesc{},
       m_viewport{},
       m_constantBufferData{},
-      m_indexCount{0},
-      m_frameCount{0} {}
+      m_indexCount{0} {}
 
   void init(HWND hwnd);
-  void render();
+  void render(float state);
 
 private:
   HWND m_hwnd;
@@ -45,11 +49,6 @@ private:
   static_assert((sizeof(ConstantBufferData) % 16) == 0,
                 "Constant Buffer size must be 16-byte aligned");
 
-  typedef struct VertexPositionColor_ {
-    DirectX::XMFLOAT3 position;
-    DirectX::XMFLOAT3 color;
-  } VertexPositionColor;
-
   typedef struct VertexPositionColorTangent_ {
     DirectX::XMFLOAT3 position;
     DirectX::XMFLOAT3 normal;
@@ -58,7 +57,6 @@ private:
 
   ConstantBufferData m_constantBufferData;
   unsigned int m_indexCount;
-  unsigned int m_frameCount;
 
   ComPtr<ID3D11Buffer> m_vertexBuffer;
   ComPtr<ID3D11Buffer> m_indexBuffer;

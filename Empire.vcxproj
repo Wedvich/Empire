@@ -49,7 +49,6 @@
     <TargetName>$(ProjectName)_d</TargetName>
     <OutDir>$(ProjectDir)bin\</OutDir>
     <ClangTidyChecks>clang-analyzer-*,cppcoreguidelines-*,modernize-*,performance-*,-modernize-use-trailing-return-type</ClangTidyChecks>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
     <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -57,7 +56,6 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)bin\</OutDir>
     <ClangTidyChecks>clang-analyzer-*,cppcoreguidelines-*,modernize-*,performance-*,-modernize-use-trailing-return-type</ClangTidyChecks>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
     <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -104,6 +102,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\game_window.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -112,8 +112,12 @@
     <ClCompile Include="src\renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\constants.h" />
+    <ClInclude Include="src\game.h" />
+    <ClInclude Include="src\cube.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\renderer.h" />
+    <ClInclude Include="src\game_window.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="lib\gsl\GSL.natvis" />

@@ -3,8 +3,10 @@
 #define NOMINMAX
 #include <windows.h>
 #include <algorithm>
+#include <math.h>
 #include <stdexcept>
 #include <wrl/client.h>
+
 #include <gsl/gsl>
 
 #ifdef _DEBUG
