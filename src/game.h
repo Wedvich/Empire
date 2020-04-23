@@ -9,11 +9,12 @@ public:
 
 private:
   GameWindow m_window;
-  Renderer m_renderer;
+  Renderer   m_renderer;
 
-  float m_tickFrequency = 1000000.0f;
   LARGE_INTEGER m_currentTime{};
-  float m_state = 0.0f;
+  float         m_tickFrequency = 1000000.0f;
+  float         m_elapsedTime   = 0.0f;
+  float         m_state         = 0.0f;
 
   void init();
   void tick();

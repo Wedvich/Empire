@@ -1,5 +1,7 @@
 Language: Cpp
 
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
 AlignEscapedNewlinesLeft: true
 BinPackParameters: false
 BreakConstructorInitializersBeforeComma: false

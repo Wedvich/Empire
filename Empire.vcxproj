@@ -48,14 +48,14 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)_d</TargetName>
     <OutDir>$(ProjectDir)bin\</OutDir>
-    <ClangTidyChecks>clang-analyzer-*,cppcoreguidelines-*,modernize-*,performance-*,-modernize-use-trailing-return-type</ClangTidyChecks>
+    <ClangTidyChecks>clang-analyzer-*,cppcoreguidelines-*,modernize-*,performance-*,-modernize-use-trailing-return-type,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-type-cstyle-cast</ClangTidyChecks>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
     <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)bin\</OutDir>
-    <ClangTidyChecks>clang-analyzer-*,cppcoreguidelines-*,modernize-*,performance-*,-modernize-use-trailing-return-type</ClangTidyChecks>
+    <ClangTidyChecks>clang-analyzer-*,cppcoreguidelines-*,modernize-*,performance-*,-modernize-use-trailing-return-type,-cppcoreguidelines-pro-type-reinterpret-cast,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-type-cstyle-cast</ClangTidyChecks>
     <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
     <CodeAnalysisRuleSet>NativeMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>

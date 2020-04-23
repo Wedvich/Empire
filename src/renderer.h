@@ -1,43 +1,30 @@
 #pragma once
 
+#include "constants.h"
 #include "cube.h"
-
-constexpr auto DEFAULT_WIDTH = 1024;
-constexpr auto DEFAULT_HEIGHT = 768;
 
 class Renderer {
 public:
-  Renderer()
-    : m_hwnd{nullptr},
-      m_featureLevel{D3D_FEATURE_LEVEL_11_1},
-      m_outputWidth{DEFAULT_WIDTH},
-      m_outputHeight{DEFAULT_HEIGHT},
-      m_tearingSupport{false},
-      m_backBufferDesc{},
-      m_viewport{},
-      m_constantBufferData{},
-      m_indexCount{0} {}
-
   void init(HWND hwnd);
   void render(float state);
 
 private:
-  HWND m_hwnd;
-  float_t m_outputWidth;
-  float_t m_outputHeight;
-  bool m_tearingSupport;
+  HWND    m_hwnd           = nullptr;
+  float_t m_outputWidth    = static_cast<float_t>(c_defaultWidth);
+  float_t m_outputHeight   = static_cast<float_t>(c_defaultHeight);
+  bool    m_tearingSupport = false;
 
-  D3D_FEATURE_LEVEL m_featureLevel;
-  D3D11_TEXTURE2D_DESC m_backBufferDesc;
-  D3D11_VIEWPORT m_viewport;
+  D3D_FEATURE_LEVEL    m_featureLevel   = D3D_FEATURE_LEVEL_11_1;
+  D3D11_TEXTURE2D_DESC m_backBufferDesc = {};
+  D3D11_VIEWPORT       m_viewport       = {};
 
-  ComPtr<IDXGIFactory5> m_dxgiFactory;
-  ComPtr<IDXGIAdapter1> m_dxgiAdapter;
-  ComPtr<ID3D11Device2> m_device;
-  ComPtr<ID3D11DeviceContext2> m_context;
-  ComPtr<IDXGISwapChain1> m_swapChain;
+  ComPtr<IDXGIFactory5>          m_dxgiFactory;
+  ComPtr<IDXGIAdapter1>          m_dxgiAdapter;
+  ComPtr<ID3D11Device2>          m_device;
+  ComPtr<ID3D11DeviceContext2>   m_context;
+  ComPtr<IDXGISwapChain1>        m_swapChain;
   ComPtr<ID3D11RenderTargetView> m_renderTargetView;
-  ComPtr<ID3D11Texture2D> m_depthStencil;
+  ComPtr<ID3D11Texture2D>        m_depthStencil;
   ComPtr<ID3D11DepthStencilView> m_depthStencilView;
 
   typedef struct ConstantBufferData_ {
@@ -55,14 +42,14 @@ private:
     DirectX::XMFLOAT3 tangent;
   } VertexPositionColorTangent;
 
-  ConstantBufferData m_constantBufferData;
-  unsigned int m_indexCount;
+  ConstantBufferData m_constantBufferData = {};
+  unsigned int       m_indexCount         = 0;
 
-  ComPtr<ID3D11Buffer> m_vertexBuffer;
-  ComPtr<ID3D11Buffer> m_indexBuffer;
+  ComPtr<ID3D11Buffer>       m_vertexBuffer;
+  ComPtr<ID3D11Buffer>       m_indexBuffer;
   ComPtr<ID3D11VertexShader> m_vertexShader;
-  ComPtr<ID3D11InputLayout> m_inputLayout;
-  ComPtr<ID3D11InputLayout> m_inputLayoutExtended;
-  ComPtr<ID3D11PixelShader> m_pixelShader;
-  ComPtr<ID3D11Buffer> m_constantBuffer;
+  ComPtr<ID3D11InputLayout>  m_inputLayout;
+  ComPtr<ID3D11InputLayout>  m_inputLayoutExtended;
+  ComPtr<ID3D11PixelShader>  m_pixelShader;
+  ComPtr<ID3D11Buffer>       m_constantBuffer;
 };

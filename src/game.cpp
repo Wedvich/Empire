@@ -34,9 +34,9 @@ void Game::tick() {
   LARGE_INTEGER newTime{};
   QueryPerformanceCounter(&newTime);
 
-  const auto deltaTime =
-      std::min((newTime.QuadPart - m_currentTime.QuadPart) / m_tickFrequency, 1.0f);
-  m_currentTime = newTime;
+  const auto deltaTicks = gsl::narrow_cast<float>(newTime.QuadPart - m_currentTime.QuadPart);
+  const auto deltaTime  = std::min(deltaTicks / m_tickFrequency, 1.0f);
+  m_currentTime         = newTime;
 
   m_state += 90 * deltaTime;
   m_state = fmod(m_state, 360.0f);
