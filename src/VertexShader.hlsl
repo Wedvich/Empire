@@ -1,3 +1,5 @@
+#pragma pack_matrix(row_major)
+
 cbuffer ModelViewProjectionConstantBuffer : register(b0) {
   matrix world;
   matrix view;
