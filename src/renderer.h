@@ -4,14 +4,17 @@ class Renderer {
 public:
   Renderer()
     : m_hwnd{nullptr},
+      m_featureLevel{D3D_FEATURE_LEVEL_11_1},
       m_outputWidth{1024},
       m_outputHeight{768},
       m_tearingSupport{false},
       m_backBufferDesc{},
-      m_viewport{} {}
+      m_viewport{},
+      m_constantBufferData{},
+      m_indexCount{0},
+      m_frameCount{0} {}
 
   void init(HWND hwnd);
-  void update();
   void render();
 
 private:

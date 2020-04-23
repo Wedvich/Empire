@@ -33,7 +33,7 @@ void Renderer::init(HWND hwnd) {
   ComPtr<ID3D11Device> device;
   ComPtr<ID3D11DeviceContext> context;
 
-  ThrowIfFailed(D3D11CreateDevice(m_dxgiAdapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, 0, deviceFlags,
+  ThrowIfFailed(D3D11CreateDevice(m_dxgiAdapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, nullptr, deviceFlags,
                                   levels, _countof(levels), D3D11_SDK_VERSION, &device,
                                   &m_featureLevel, &context));
 
@@ -52,8 +52,8 @@ void Renderer::init(HWND hwnd) {
   swapChainDesc.SampleDesc.Quality = 0;
   swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
   swapChainDesc.Flags = m_tearingSupport ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
-  swapChainDesc.Width = m_outputWidth;
-  swapChainDesc.Height = m_outputHeight;
+  swapChainDesc.Width = gsl::narrow_cast<UINT>(m_outputWidth);
+  swapChainDesc.Height = gsl::narrow_cast<UINT>(m_outputHeight);
 
   DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullscreenSwapChainDesc{};
   fullscreenSwapChainDesc.Windowed = TRUE;
@@ -169,7 +169,7 @@ void Renderer::init(HWND hwnd) {
       1, 7, 5,
   };
 
-  m_indexCount = ARRAYSIZE(CubeIndices);
+  m_indexCount = _countof(CubeIndices);
 
   CD3D11_BUFFER_DESC indexBufferDesc(sizeof(CubeIndices), D3D11_BIND_INDEX_BUFFER);
 
@@ -217,15 +217,12 @@ void Renderer::init(HWND hwnd) {
   fclose(pixelShader);
 }
 
-void Renderer::update() {
+void Renderer::render() {
   XMStoreFloat4x4(&m_constantBufferData.world,
                   XMMatrixTranspose(XMMatrixRotationY(XMConvertToRadians((float)m_frameCount++))));
 
   if (m_frameCount == MAXUINT)
     m_frameCount = 0;
-}
-
-void Renderer::render() {
   m_context->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &m_constantBufferData, 0, 0);
 
   const FLOAT clearColor[] = {0.25f, 0.5f, 0.75f, 1.0f};

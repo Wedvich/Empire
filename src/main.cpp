@@ -10,7 +10,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
   return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
-int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, LPWSTR, int nShowCmd) {
+_Use_decl_annotations_
+int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, LPWSTR, int showCommand) {
   WNDCLASSEX wcex{};
   wcex.cbSize = sizeof(WNDCLASSEX);
   wcex.style = CS_DBLCLKS;
@@ -37,7 +38,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, LPWSTR, int nShowCmd) {
       CreateWindowEx(WS_EX_APPWINDOW, wcex.lpszClassName, L"Empire", windowStyle, windowLeft,
                      windowTop, windowWidth, windowHeight, nullptr, nullptr, instance, nullptr);
 
-  ShowWindow(hwnd, nShowCmd);
+  ShowWindow(hwnd, showCommand);
 
   Renderer renderer{};
   renderer.init(hwnd);
@@ -48,7 +49,6 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, LPWSTR, int nShowCmd) {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
     } else {
-      renderer.update();
       renderer.render();
     }
   }
