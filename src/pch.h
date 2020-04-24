@@ -1,26 +1,35 @@
 #pragma once
 
+#include <sdkddkver.h>
+
+#include <winsdkver.h>
+
 #define NOMINMAX
-#include <windows.h>
 
 #include <algorithm>
 #include <gsl/gsl>
 #include <map>
+#include <sstream>
 #include <stdexcept>
+#include <string>
 #include <wrl/client.h>
 
 #ifdef _DEBUG
 #include <crtdbg.h>
 #endif
 
+#include <d2d1_2.h>
 #include <d3d11_2.h>
 #include <d3dcompiler.h>
 #include <directxmath.h>
+#include <dwrite.h>
 #include <dxgi1_5.h>
 
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
 
 using Microsoft::WRL::ComPtr;
 

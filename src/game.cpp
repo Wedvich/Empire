@@ -54,7 +54,7 @@ void Game::tick() {
 #pragma region TODO : Move to systems
     auto camera = m_renderer.getCamera();
     if (m_inputState.R) {
-      camera->m_eye = {0.0f, 0.7f, 1.5f};
+      camera->m_eye = {0.0f, 0.5f, -3.5f};
       camera->m_at  = {0.0f, 0.1f, 0.0f};
     }
 
@@ -70,13 +70,13 @@ void Game::tick() {
 
     if (!m_inputState.Shift) {
       if (m_inputState.W) {
-        camera->m_eye.z -= 2.0f * deltaTime;
-        camera->m_at.z -= 2.0f * deltaTime;
+        camera->m_eye.z += 2.0f * deltaTime;
+        camera->m_at.z += 2.0f * deltaTime;
       }
 
       if (m_inputState.S) {
-        camera->m_eye.z += 2.0f * deltaTime;
-        camera->m_at.z += 2.0f * deltaTime;
+        camera->m_eye.z -= 2.0f * deltaTime;
+        camera->m_at.z -= 2.0f * deltaTime;
       }
     } else {
       if (m_inputState.W) {

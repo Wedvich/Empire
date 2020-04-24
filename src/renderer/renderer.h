@@ -1,14 +1,14 @@
 #pragma once
 
+#include "camera.h"
+#include "components/transform.h"
 #include "constants.h"
 #include "cube.h"
-#include "components/transform.h"
-#include "camera.h"
 
 class Renderer {
 public:
-  void init(HWND hwnd);
-  void render(TransformComponent* state);
+  void    init(HWND hwnd);
+  void    render(TransformComponent* state);
   Camera* getCamera() const { return m_camera.get(); }
 
 private:
@@ -52,6 +52,13 @@ private:
 
   std::unique_ptr<Camera> m_camera;
 
+  ComPtr<ID2D1Factory2>        m_d2dFactory;
+  ComPtr<ID2D1RenderTarget>    m_d2dRenderTarget;
+  ComPtr<ID2D1SolidColorBrush> m_textBrush;
+  ComPtr<IDWriteFactory>       m_dWriteFactory;
+  ComPtr<IDWriteTextFormat>    m_textFormat;
+
+  void initUi();
   void clear();
   void updateViewMatrix();
 };

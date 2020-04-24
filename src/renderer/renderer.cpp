@@ -98,7 +98,7 @@ void Renderer::init(HWND hwnd) {
 
   const auto aspectRatio = static_cast<float>(m_outputWidth) / static_cast<float>(m_outputHeight);
   XMStoreFloat4x4(&m_constantBufferData.projection,
-                  XMMatrixPerspectiveFovRH(XMConvertToRadians(70), aspectRatio, 0.01f, 100.0f));
+                  XMMatrixPerspectiveFovLH(XMConvertToRadians(70), aspectRatio, 0.01f, 100.0f));
 
   Cube cube{};
 
@@ -151,13 +151,15 @@ void Renderer::init(HWND hwnd) {
   delete bytes;
 
   fclose(pixelShader);
+
+  initUi();
 }
 
 void Renderer::render(TransformComponent* state) {
   clear();
 
   // Move transformed object
-  // TODO: Split constant buffers
+  // TODO: Split constant buffers?
   XMStoreFloat4x4(&m_constantBufferData.world,
                   XMMatrixRotationRollPitchYaw(XMConvertToRadians(state->rotation.x),
                                                XMConvertToRadians(state->rotation.y),
@@ -180,7 +182,54 @@ void Renderer::render(TransformComponent* state) {
 
   m_context->DrawIndexed(m_indexCount, 0, 0);
 
+  D2D1_RECT_F layout{8.0f, 8.0f, m_outputWidth - 16.0f, m_outputHeight - 16.0f};
+
+  std::wostringstream w;
+  w << L"Camera position (press R to reset)" << std::endl << std::endl;
+  w << L" x: " << std::to_wstring(m_camera->m_eye.x) << std::endl;
+  w << L" y: " << std::to_wstring(m_camera->m_eye.y) << std::endl;
+  w << L" z: " << std::to_wstring(m_camera->m_eye.z) << std::endl;
+
+  auto ws = w.str();
+
+  // m_d2dRenderTarget->DrawTextW(text1.c_str(), text1.size(), m_textFormat.Get(), layout, m_textBrush);
+
+  m_d2dRenderTarget->BeginDraw();
+  m_d2dRenderTarget->SetTransform(D2D1::IdentityMatrix());
+  m_d2dRenderTarget->DrawText(ws.c_str(), ws.size(), m_textFormat.Get(), &layout, m_textBrush.Get());
+  m_d2dRenderTarget->EndDraw();
+
   m_swapChain->Present(0, m_tearingSupport ? DXGI_PRESENT_ALLOW_TEARING : 0);
+}
+
+void Renderer::initUi() {
+  // Direct2D
+  ThrowIfFailed(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, m_d2dFactory.GetAddressOf()));
+
+  ComPtr<ID3D11Texture2D> backBuffer;
+  ThrowIfFailed(m_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer)));
+  ComPtr<IDXGISurface> backBufferSurface;
+  ThrowIfFailed(backBuffer.As(&backBufferSurface));
+
+  const auto dpi = GetDpiForWindow(m_hwnd);
+
+  D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
+      D2D1_RENDER_TARGET_TYPE_DEFAULT,
+      D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED), dpi, dpi);
+
+  ThrowIfFailed(m_d2dFactory->CreateDxgiSurfaceRenderTarget(
+      backBufferSurface.Get(), &props, m_d2dRenderTarget.ReleaseAndGetAddressOf()));
+
+  ThrowIfFailed(m_d2dRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White),
+                                                         m_textBrush.GetAddressOf()));
+
+  // DirectWrite
+  ThrowIfFailed(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
+                                    reinterpret_cast<IUnknown**>(m_dWriteFactory.GetAddressOf())));
+
+  ThrowIfFailed(m_dWriteFactory->CreateTextFormat(
+      L"Consolas", nullptr, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL,
+      DWRITE_FONT_STRETCH_NORMAL, 16.0f, L"en-us", m_textFormat.GetAddressOf()));
 }
 
 void Renderer::clear() {
@@ -197,7 +246,7 @@ void Renderer::updateViewMatrix() {
   XMVECTOR at  = XMLoadFloat3(&m_camera->m_at);
   XMVECTOR up  = XMLoadFloat3(&m_camera->m_up);
 
-  XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixLookAtRH(eye, at, up));
+  XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixLookAtLH(eye, at, up));
 
   m_context->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &m_constantBufferData, 0, 0);
 }
