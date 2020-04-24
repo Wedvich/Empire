@@ -1,14 +1,14 @@
 #pragma once
 
 #include "camera.h"
-#include "components/transform.h"
 #include "constants.h"
 #include "cube.h"
+#include "transform_proxy.h"
 
 class Renderer {
 public:
   void    init(HWND hwnd);
-  void    render(TransformComponent* state);
+  void    render(TransformProxy* state);
   Camera* getCamera() const { return m_camera.get(); }
 
 private:

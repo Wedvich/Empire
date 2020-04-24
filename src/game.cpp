@@ -1,6 +1,7 @@
 #include "game.h"
 #include "constants.h"
 #include "renderer/renderer.h"
+#include <utils\transform.h>
 
 void Game::run() {
   init();
@@ -97,7 +98,10 @@ void Game::tick() {
     m_elapsedTime += deltaTime;
   }
 
-  m_renderer.render(&m_cubeTransform);
+  TransformProxy cubeTransform{};
+  Utils::copyTransform(m_cubeTransform, &cubeTransform);
+
+  m_renderer.render(&cubeTransform);
 }
 
 LRESULT Game::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) {

@@ -155,20 +155,23 @@ void Renderer::init(HWND hwnd) {
   initUi();
 }
 
-void Renderer::render(TransformComponent* state) {
+void Renderer::render(TransformProxy* state) {
   clear();
 
-  // Move transformed object
-  // TODO: Split constant buffers?
-  XMStoreFloat4x4(&m_constantBufferData.world,
-                  XMMatrixRotationRollPitchYaw(XMConvertToRadians(state->rotation.x),
-                                               XMConvertToRadians(state->rotation.y),
-                                               XMConvertToRadians(state->rotation.z)));
+  const auto scalingVector      = XMLoadFloat3(&state->scale);
+  const auto rotationQuaternion = XMLoadFloat4(&state->rotate);
+  const auto translationVector  = XMLoadFloat3(&state->translate);
+
+  const auto worldMatrix = XMMatrixScalingFromVector(scalingVector) *
+                           XMMatrixRotationQuaternion(rotationQuaternion) *
+                           XMMatrixTranslationFromVector(translationVector);
+
+  XMStoreFloat4x4(&m_constantBufferData.world, worldMatrix);
 
   updateViewMatrix();
 
-  UINT stride = sizeof(VertexPositionColor);
-  UINT offset = 0;
+  const UINT stride = sizeof(VertexPositionColor);
+  const UINT offset = 0;
 
   m_context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
   m_context->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
@@ -182,21 +185,20 @@ void Renderer::render(TransformComponent* state) {
 
   m_context->DrawIndexed(m_indexCount, 0, 0);
 
-  D2D1_RECT_F layout{8.0f, 8.0f, m_outputWidth - 16.0f, m_outputHeight - 16.0f};
+  // TODO: Move to UI drawing
+  const D2D1_RECT_F layout{8.0f, 8.0f, m_outputWidth - 16.0f, m_outputHeight - 16.0f};
 
   std::wostringstream w;
   w << L"Camera position (press R to reset)" << std::endl << std::endl;
   w << L" x: " << std::to_wstring(m_camera->m_eye.x) << std::endl;
   w << L" y: " << std::to_wstring(m_camera->m_eye.y) << std::endl;
   w << L" z: " << std::to_wstring(m_camera->m_eye.z) << std::endl;
-
-  auto ws = w.str();
-
-  // m_d2dRenderTarget->DrawTextW(text1.c_str(), text1.size(), m_textFormat.Get(), layout, m_textBrush);
+  const auto ws = w.str();
 
   m_d2dRenderTarget->BeginDraw();
   m_d2dRenderTarget->SetTransform(D2D1::IdentityMatrix());
-  m_d2dRenderTarget->DrawText(ws.c_str(), ws.size(), m_textFormat.Get(), &layout, m_textBrush.Get());
+  m_d2dRenderTarget->DrawText(ws.c_str(), ws.size(), m_textFormat.Get(), &layout,
+                              m_textBrush.Get());
   m_d2dRenderTarget->EndDraw();
 
   m_swapChain->Present(0, m_tearingSupport ? DXGI_PRESENT_ALLOW_TEARING : 0);
@@ -242,9 +244,9 @@ void Renderer::clear() {
 }
 
 void Renderer::updateViewMatrix() {
-  XMVECTOR eye = XMLoadFloat3(&m_camera->m_eye);
-  XMVECTOR at  = XMLoadFloat3(&m_camera->m_at);
-  XMVECTOR up  = XMLoadFloat3(&m_camera->m_up);
+  const XMVECTOR eye = XMLoadFloat3(&m_camera->m_eye);
+  const XMVECTOR at  = XMLoadFloat3(&m_camera->m_at);
+  const XMVECTOR up  = XMLoadFloat3(&m_camera->m_up);
 
   XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixLookAtLH(eye, at, up));
 
