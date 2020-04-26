@@ -9,6 +9,7 @@
     <ClCompile Include="src\renderer\renderer.cpp" />
     <ClCompile Include="src\input_state.cpp" />
     <ClCompile Include="src\utils\transform.cpp" />
+    <ClCompile Include="src\renderer\model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h" />
@@ -26,6 +27,8 @@
     <ClInclude Include="src\input_state.h" />
     <ClInclude Include="src\renderer\transform_proxy.h" />
     <ClInclude Include="src\utils\transform.h" />
+    <ClInclude Include="src\renderer\model.h" />
+    <ClInclude Include="src\renderer\vertex_types.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="lib\gsl\GSL.natvis" />

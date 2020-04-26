@@ -1,9 +1,6 @@
 #pragma once
 
-typedef struct VertexPositionColor_ {
-  DirectX::XMFLOAT3 position;
-  DirectX::XMFLOAT3 color;
-} VertexPositionColor;
+#include "renderer/vertex_types.h"
 
 struct Cube {
   const VertexPositionColor vertices[8] = {

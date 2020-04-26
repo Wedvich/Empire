@@ -129,12 +129,12 @@ void Renderer::init(HWND hwnd) {
   ThrowIfFailed(
       device->CreateVertexShader(bytes, bytesRead, nullptr, m_vertexShader.GetAddressOf()));
 
-  D3D11_INPUT_ELEMENT_DESC inpultLayoutDesc[] = {
+  D3D11_INPUT_ELEMENT_DESC inputLayoutDesc[] = {
       {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
       {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
   };
 
-  ThrowIfFailed(device->CreateInputLayout(inpultLayoutDesc, _countof(inpultLayoutDesc), bytes,
+  ThrowIfFailed(device->CreateInputLayout(inputLayoutDesc, _countof(inputLayoutDesc), bytes,
                                           bytesRead, &m_inputLayout));
 
   fclose(vertexShader);
@@ -151,6 +151,8 @@ void Renderer::init(HWND hwnd) {
   delete bytes;
 
   fclose(pixelShader);
+ 
+  m_model.init(m_device.Get(), cube.vertices, cube.indices, m_inputLayout.Get(), m_vertexShader.Get(), m_pixelShader.Get());
 
   initUi();
 }
@@ -170,20 +172,22 @@ void Renderer::render(TransformProxy* state) {
 
   updateViewMatrix();
 
-  const UINT stride = sizeof(VertexPositionColor);
-  const UINT offset = 0;
+  //const UINT stride = sizeof(VertexPositionColor);
+  //const UINT offset = 0;
 
-  m_context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
-  m_context->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-  m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-  m_context->IASetInputLayout(m_inputLayout.Get());
+  //m_context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
+  //m_context->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+  //m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+  //m_context->IASetInputLayout(m_inputLayout.Get());
 
-  m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
-  m_context->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
+  //m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
+  //m_context->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
 
-  m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
+  //m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
 
-  m_context->DrawIndexed(m_indexCount, 0, 0);
+  //m_context->DrawIndexed(m_indexCount, 0, 0);
+
+  m_model.render(m_context.Get(), m_constantBuffer.GetAddressOf());
 
   // TODO: Move to UI drawing
   const D2D1_RECT_F layout{8.0f, 8.0f, m_outputWidth - 16.0f, m_outputHeight - 16.0f};

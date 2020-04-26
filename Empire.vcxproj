@@ -110,6 +110,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\renderer\model.cpp" />
     <ClCompile Include="src\renderer\renderer.cpp" />
     <ClCompile Include="src\utils\transform.cpp" />
     <ClCompile Include="src\world.cpp" />
@@ -124,9 +125,11 @@
     <ClInclude Include="src\input_state.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\renderer\camera.h" />
+    <ClInclude Include="src\renderer\model.h" />
     <ClInclude Include="src\renderer\renderer.h" />
     <ClInclude Include="src\game_window.h" />
     <ClInclude Include="src\renderer\transform_proxy.h" />
+    <ClInclude Include="src\renderer\vertex_types.h" />
     <ClInclude Include="src\systems\system.h" />
     <ClInclude Include="src\utils\transform.h" />
     <ClInclude Include="src\world.h" />

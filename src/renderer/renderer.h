@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "cube.h"
 #include "transform_proxy.h"
+#include "model.h"
 
 class Renderer {
 public:
@@ -57,6 +58,8 @@ private:
   ComPtr<ID2D1SolidColorBrush> m_textBrush;
   ComPtr<IDWriteFactory>       m_dWriteFactory;
   ComPtr<IDWriteTextFormat>    m_textFormat;
+
+  Model m_model = {};
 
   void initUi();
   void clear();
