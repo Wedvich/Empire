@@ -36,8 +36,6 @@ void Game::init() {
 }
 
 void Game::tick() {
-  // TODO: Update input state
-
   LARGE_INTEGER newTime{};
   QueryPerformanceCounter(&newTime);
   const auto ticks = gsl::narrow_cast<float>(newTime.QuadPart - m_currentTime.QuadPart);
@@ -53,43 +51,59 @@ void Game::tick() {
 #pragma endregion
 
 #pragma region TODO : Move to systems
+    constexpr auto resetBinding       = std::make_pair(InputId::R, 0);
+    constexpr auto moveForwardBinding = std::make_pair(InputId::W, 0);
+    constexpr auto moveBackBinding    = std::make_pair(InputId::S, 0);
+    constexpr auto moveUpBinding      = std::make_pair(InputId::W, InputModifier::Shift);
+    constexpr auto moveDownBinding    = std::make_pair(InputId::S, InputModifier::Shift);
+    constexpr auto strafeLeftBinding  = std::make_pair(InputId::A, 0);
+    constexpr auto strafeRightBinding = std::make_pair(InputId::D, 0);
+
     auto camera = m_renderer.getCamera();
-    if (m_inputState.R) {
+
+    auto isBindingActive = [&](std::pair<InputId, int> binding) {
+      return std::find_if(m_inputMapper.m_activeButtons.begin(),
+                          m_inputMapper.m_activeButtons.end(),
+                          [&](std::pair<InputId, int> activeBinding) {
+                            return activeBinding == binding;
+                          }) != m_inputMapper.m_activeButtons.end();
+    };
+
+    if (isBindingActive(resetBinding)) {
       camera->m_eye = {0.0f, 0.5f, -3.5f};
       camera->m_at  = {0.0f, 0.1f, 0.0f};
     }
 
-    if (m_inputState.A) {
+    if (isBindingActive(moveForwardBinding)) {
+      camera->m_eye.z += 2.0f * deltaTime;
+      camera->m_at.z += 2.0f * deltaTime;
+    }
+
+    if (isBindingActive(moveBackBinding)) {
+      camera->m_eye.z -= 2.0f * deltaTime;
+      camera->m_at.z -= 2.0f * deltaTime;
+    }
+
+    if (isBindingActive(moveUpBinding)) {
+      camera->m_eye.y += 2.0f * deltaTime;
+      camera->m_at.y += 2.0f * deltaTime;
+    }
+
+    if (isBindingActive(moveDownBinding)) {
+      camera->m_eye.y -= 2.0f * deltaTime;
+      camera->m_at.y -= 2.0f * deltaTime;
+    }
+
+    if (isBindingActive(strafeLeftBinding)) {
       camera->m_eye.x -= 2.0f * deltaTime;
       camera->m_at.x -= 2.0f * deltaTime;
     }
 
-    if (m_inputState.D) {
+    if (isBindingActive(strafeRightBinding)) {
       camera->m_eye.x += 2.0f * deltaTime;
       camera->m_at.x += 2.0f * deltaTime;
     }
 
-    if (!m_inputState.Shift) {
-      if (m_inputState.W) {
-        camera->m_eye.z += 2.0f * deltaTime;
-        camera->m_at.z += 2.0f * deltaTime;
-      }
-
-      if (m_inputState.S) {
-        camera->m_eye.z -= 2.0f * deltaTime;
-        camera->m_at.z -= 2.0f * deltaTime;
-      }
-    } else {
-      if (m_inputState.W) {
-        camera->m_eye.y += 2.0f * deltaTime;
-        camera->m_at.y += 2.0f * deltaTime;
-      }
-
-      if (m_inputState.S) {
-        camera->m_eye.y -= 2.0f * deltaTime;
-        camera->m_at.y -= 2.0f * deltaTime;
-      }
-    }
 #pragma endregion
 
     m_world->update(deltaTime);
@@ -125,7 +139,7 @@ LRESULT Game::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam
     case WM_ENTERSIZEMOVE:
       s_inSizeMove = true;
       if (game) {
-        game->m_inputState.reset();
+        game->m_inputMapper.clear();
       }
       SetTimer(handle, c_sizeMoveTimerId, USER_TIMER_MINIMUM, nullptr);
       break;
@@ -138,52 +152,22 @@ LRESULT Game::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam
       break;
 
     case WM_KEYDOWN:
+    case WM_SYSKEYDOWN:
       if (game) {
-        switch (wParam) {
-          case VK_SHIFT:
-            game->m_inputState.Shift = true;
-            break;
-          case 0x57:
-            game->m_inputState.W = true;
-            break;
-          case 0x41:
-            game->m_inputState.A = true;
-            break;
-          case 0x53:
-            game->m_inputState.S = true;
-            break;
-          case 0x44:
-            game->m_inputState.D = true;
-            break;
-          case 0x52:
-            game->m_inputState.R = true;
-            break;
-        }
+        game->m_inputMapper.updateKeyState(wParam, lParam, true);
       }
       break;
 
     case WM_KEYUP:
+    case WM_SYSKEYUP:
       if (game) {
-        switch (wParam) {
-          case VK_SHIFT:
-            game->m_inputState.Shift = false;
-            break;
-          case 0x57:
-            game->m_inputState.W = false;
-            break;
-          case 0x41:
-            game->m_inputState.A = false;
-            break;
-          case 0x53:
-            game->m_inputState.S = false;
-            break;
-          case 0x44:
-            game->m_inputState.D = false;
-            break;
-          case 0x52:
-            game->m_inputState.R = false;
-            break;
-        }
+        game->m_inputMapper.updateKeyState(wParam, lParam, false);
+      }
+      break;
+
+    case WM_MOUSEMOVE:
+      if (game) {
+        // TODO: Update mouse state
       }
       break;
 

@@ -8,7 +8,9 @@
 
 #include <algorithm>
 #include <gsl/gsl>
+#include <list>
 #include <map>
+#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <string>

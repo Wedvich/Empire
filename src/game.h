@@ -4,8 +4,7 @@
 #include "game_window.h"
 #include "renderer/renderer.h"
 #include "world.h"
-#include "input_state.h"
-#include <input_state.h>
+#include "input/input_mapper.h"
 
 class Game {
 public:
@@ -14,7 +13,7 @@ public:
 private:
   GameWindow m_window;
   Renderer   m_renderer;
-  InputState m_inputState;
+  InputMapper m_inputMapper;
 
   std::unique_ptr<World> m_world;
 

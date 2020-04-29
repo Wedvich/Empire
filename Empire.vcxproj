@@ -104,7 +104,7 @@
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\game_window.cpp" />
-    <ClCompile Include="src\input_state.cpp" />
+    <ClCompile Include="src\input\input_mapper.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -122,7 +122,9 @@
     <ClInclude Include="src\entities\entity.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\cube.h" />
-    <ClInclude Include="src\input_state.h" />
+    <ClInclude Include="src\input\input_constants.h" />
+    <ClInclude Include="src\input\input_context.h" />
+    <ClInclude Include="src\input\input_mapper.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\renderer\camera.h" />
     <ClInclude Include="src\renderer\model.h" />
