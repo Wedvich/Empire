@@ -42,7 +42,7 @@ int InputMapper::getModifierKeys() const {
   return modifiers;
 }
 
-InputId InputMapper::mapKey(WPARAM wParam, LPARAM lParam) {
+InputId InputMapper::mapKey(WPARAM wParam, LPARAM lParam) const {
   switch (wParam) {
     // Character keys
     case 0x41:

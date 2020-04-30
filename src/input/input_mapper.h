@@ -9,7 +9,7 @@ public:
 
 private:
   int      getModifierKeys() const;
-  InputId mapKey(WPARAM wParam, LPARAM lParam);
+  InputId mapKey(WPARAM wParam, LPARAM lParam) const;
   InputModifier buttonToModifier(InputId buttonInputId) const;
 
 private:
