@@ -70,7 +70,7 @@ void Game::tick() {
     };
 
     if (isBindingActive(resetBinding)) {
-      camera->m_eye = {0.0f, 0.5f, -3.5f};
+      camera->m_eye = {0.0f, 0.5f, -5.0f};
       camera->m_at  = {0.0f, 0.1f, 0.0f};
     }
 

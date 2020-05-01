@@ -4,6 +4,7 @@ AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
 AlignEscapedNewlinesLeft: true
 BinPackParameters: false
+BreakConstructorInitializers: AfterColon
 BreakConstructorInitializersBeforeComma: false
 ColumnLimit: 100
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
@@ -14,6 +15,7 @@ IndentCaseLabels: true
 IndentWidth: 2
 MaxEmptyLinesToKeep: 1
 PointerAlignment: Left
+SpaceBeforeCtorInitializerColon: true
 SpaceBeforeParens: ControlStatements
 TabWidth: 2
 UseTab: Never

@@ -31,6 +31,7 @@
     <ClInclude Include="src\input\input_mapper.h" />
     <ClInclude Include="src\input\input_context.h" />
     <ClInclude Include="src\input\input_constants.h" />
+    <ClInclude Include="src\data\temp_model_data.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="lib\gsl\GSL.natvis" />

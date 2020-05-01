@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include <data\temp_model_data.h>
 
 using namespace DirectX;
 
@@ -84,6 +85,11 @@ void Renderer::init(HWND hwnd) {
   ThrowIfFailed(m_device->CreateDepthStencilView(m_depthStencil.Get(), &depthStencilViewDesc,
                                                  m_depthStencilView.ReleaseAndGetAddressOf()));
 
+  CD3D11_RASTERIZER_DESC1 rasterizerDesc(D3D11_DEFAULT);
+  rasterizerDesc.CullMode = D3D11_CULL_NONE;
+  ThrowIfFailed(m_device->CreateRasterizerState1(&rasterizerDesc, m_rasterizerState.ReleaseAndGetAddressOf()));
+  m_context->RSSetState(m_rasterizerState.Get()); 
+
   ZeroMemory(&m_viewport, sizeof(D3D11_VIEWPORT));
   m_viewport.Width    = static_cast<FLOAT>(m_backBufferDesc.Width);
   m_viewport.Height   = static_cast<FLOAT>(m_backBufferDesc.Height);
@@ -100,60 +106,7 @@ void Renderer::init(HWND hwnd) {
   XMStoreFloat4x4(&m_constantBufferData.projection,
                   XMMatrixPerspectiveFovLH(XMConvertToRadians(70), aspectRatio, 0.01f, 100.0f));
 
-  Cube cube{};
-
-  CD3D11_BUFFER_DESC     vertexBufferDesc(sizeof(cube.vertices), D3D11_BIND_VERTEX_BUFFER);
-  D3D11_SUBRESOURCE_DATA vertexData{};
-  vertexData.pSysMem = cube.vertices;
-
-  ThrowIfFailed(m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer));
-
-  m_indexCount = _countof(cube.indices);
-
-  CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cube.indices), D3D11_BIND_INDEX_BUFFER);
-
-  D3D11_SUBRESOURCE_DATA indexData{};
-  indexData.pSysMem = cube.indices;
-
-  ThrowIfFailed(device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer));
-
-  FILE* vertexShader;
-  BYTE* bytes;
-
-  size_t destSize  = 65536;
-  size_t bytesRead = 0;
-  bytes            = new BYTE[destSize];
-
-  fopen_s(&vertexShader, "VertexShader.cso", "rb");
-  bytesRead = fread_s(bytes, destSize, 1, 65536, vertexShader);
-  ThrowIfFailed(
-      device->CreateVertexShader(bytes, bytesRead, nullptr, m_vertexShader.GetAddressOf()));
-
-  D3D11_INPUT_ELEMENT_DESC inputLayoutDesc[] = {
-      {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-      {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-  };
-
-  ThrowIfFailed(device->CreateInputLayout(inputLayoutDesc, _countof(inputLayoutDesc), bytes,
-                                          bytesRead, &m_inputLayout));
-
-  fclose(vertexShader);
-
-  FILE* pixelShader;
-  delete bytes;
-
-  bytes     = new BYTE[destSize];
-  bytesRead = 0;
-  fopen_s(&pixelShader, "PixelShader.cso", "rb");
-  bytesRead = fread_s(bytes, destSize, 1, 65536, pixelShader);
-  ThrowIfFailed(device->CreatePixelShader(bytes, bytesRead, nullptr, m_pixelShader.GetAddressOf()));
-
-  delete bytes;
-
-  fclose(pixelShader);
- 
-  m_model.init(m_device.Get(), cube.vertices, cube.indices, m_inputLayout.Get(), m_vertexShader.Get(), m_pixelShader.Get());
-
+  initResources();
   initUi();
 }
 
@@ -169,43 +122,62 @@ void Renderer::render(TransformProxy* state) {
                            XMMatrixTranslationFromVector(translationVector);
 
   XMStoreFloat4x4(&m_constantBufferData.world, worldMatrix);
-
   updateViewMatrix();
-
-  //const UINT stride = sizeof(VertexPositionColor);
-  //const UINT offset = 0;
-
-  //m_context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
-  //m_context->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-  //m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-  //m_context->IASetInputLayout(m_inputLayout.Get());
-
-  //m_context->VSSetShader(m_vertexShader.Get(), nullptr, 0);
-  //m_context->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
-
-  //m_context->PSSetShader(m_pixelShader.Get(), nullptr, 0);
-
-  //m_context->DrawIndexed(m_indexCount, 0, 0);
-
   m_model.render(m_context.Get(), m_constantBuffer.GetAddressOf());
 
-  // TODO: Move to UI drawing
-  const D2D1_RECT_F layout{8.0f, 8.0f, m_outputWidth - 16.0f, m_outputHeight - 16.0f};
+  XMStoreFloat4x4(&m_constantBufferData.world, XMMatrixIdentity());
+  updateViewMatrix();
+  m_worldModel.render(m_context.Get(), m_constantBuffer.GetAddressOf());
 
-  std::wostringstream w;
-  w << L"Camera position (press R to reset)" << std::endl << std::endl;
-  w << L" x: " << std::to_wstring(m_camera->m_eye.x) << std::endl;
-  w << L" y: " << std::to_wstring(m_camera->m_eye.y) << std::endl;
-  w << L" z: " << std::to_wstring(m_camera->m_eye.z) << std::endl;
-  const auto ws = w.str();
-
-  m_d2dRenderTarget->BeginDraw();
-  m_d2dRenderTarget->SetTransform(D2D1::IdentityMatrix());
-  m_d2dRenderTarget->DrawText(ws.c_str(), ws.size(), m_textFormat.Get(), &layout,
-                              m_textBrush.Get());
-  m_d2dRenderTarget->EndDraw();
+  renderUi();
 
   m_swapChain->Present(0, m_tearingSupport ? DXGI_PRESENT_ALLOW_TEARING : 0);
+}
+
+void Renderer::initResources() {
+  Cube cube{};
+
+  FILE* vertexShader;
+  BYTE* bytes;
+
+  size_t destSize  = 65536;
+  size_t bytesRead = 0;
+  bytes            = new BYTE[destSize];
+
+  fopen_s(&vertexShader, "VertexShader.cso", "rb");
+  bytesRead = fread_s(bytes, destSize, 1, 65536, vertexShader);
+  ThrowIfFailed(
+      m_device->CreateVertexShader(bytes, bytesRead, nullptr, m_vertexShader.GetAddressOf()));
+
+  D3D11_INPUT_ELEMENT_DESC inputLayoutDesc[] = {
+      {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+      {"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+  };
+
+  ThrowIfFailed(m_device->CreateInputLayout(inputLayoutDesc, _countof(inputLayoutDesc), bytes,
+                                          bytesRead, &m_inputLayout));
+
+  fclose(vertexShader);
+
+  FILE* pixelShader;
+  delete bytes;
+
+  bytes     = new BYTE[destSize];
+  bytesRead = 0;
+  fopen_s(&pixelShader, "PixelShader.cso", "rb");
+  bytesRead = fread_s(bytes, destSize, 1, 65536, pixelShader);
+  ThrowIfFailed(m_device->CreatePixelShader(bytes, bytesRead, nullptr, m_pixelShader.GetAddressOf()));
+
+  delete bytes;
+
+  fclose(pixelShader);
+
+  Room room{};
+
+  m_model.init(m_device.Get(), cube.vertices, cube.indices, m_inputLayout.Get(),
+               m_vertexShader.Get(), m_pixelShader.Get());
+  m_worldModel.init(m_device.Get(), room.vertices, room.indices, m_inputLayout.Get(),
+                    m_vertexShader.Get(), m_pixelShader.Get());
 }
 
 void Renderer::initUi() {
@@ -226,7 +198,7 @@ void Renderer::initUi() {
   ThrowIfFailed(m_d2dFactory->CreateDxgiSurfaceRenderTarget(
       backBufferSurface.Get(), &props, m_d2dRenderTarget.ReleaseAndGetAddressOf()));
 
-  ThrowIfFailed(m_d2dRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White),
+  ThrowIfFailed(m_d2dRenderTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black),
                                                          m_textBrush.GetAddressOf()));
 
   // DirectWrite
@@ -255,4 +227,21 @@ void Renderer::updateViewMatrix() {
   XMStoreFloat4x4(&m_constantBufferData.view, XMMatrixLookAtLH(eye, at, up));
 
   m_context->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &m_constantBufferData, 0, 0);
+}
+
+void Renderer::renderUi() {
+  const D2D1_RECT_F layout{8.0f, 8.0f, m_outputWidth - 16.0f, m_outputHeight - 16.0f};
+
+  std::wostringstream w;
+  w << L"Camera position (press R to reset)" << std::endl << std::endl;
+  w << L" x: " << std::to_wstring(m_camera->m_eye.x) << std::endl;
+  w << L" y: " << std::to_wstring(m_camera->m_eye.y) << std::endl;
+  w << L" z: " << std::to_wstring(m_camera->m_eye.z) << std::endl;
+  const auto ws = w.str();
+
+  m_d2dRenderTarget->BeginDraw();
+  m_d2dRenderTarget->SetTransform(D2D1::IdentityMatrix());
+  m_d2dRenderTarget->DrawText(ws.c_str(), ws.size(), m_textFormat.Get(), &layout,
+                              m_textBrush.Get());
+  m_d2dRenderTarget->EndDraw();
 }

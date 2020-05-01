@@ -3,8 +3,8 @@
 #include "camera.h"
 #include "constants.h"
 #include "cube.h"
-#include "transform_proxy.h"
 #include "model.h"
+#include "transform_proxy.h"
 
 class Renderer {
 public:
@@ -30,6 +30,7 @@ private:
   ComPtr<ID3D11RenderTargetView> m_renderTargetView;
   ComPtr<ID3D11Texture2D>        m_depthStencil;
   ComPtr<ID3D11DepthStencilView> m_depthStencilView;
+  ComPtr<ID3D11RasterizerState1> m_rasterizerState;
 
   typedef struct ConstantBufferData_ {
     DirectX::XMFLOAT4X4 world;
@@ -41,10 +42,7 @@ private:
                 "Constant Buffer size must be 16-byte aligned");
 
   ConstantBufferData m_constantBufferData = {};
-  unsigned int       m_indexCount         = 0;
 
-  ComPtr<ID3D11Buffer>       m_vertexBuffer;
-  ComPtr<ID3D11Buffer>       m_indexBuffer;
   ComPtr<ID3D11VertexShader> m_vertexShader;
   ComPtr<ID3D11InputLayout>  m_inputLayout;
   ComPtr<ID3D11InputLayout>  m_inputLayoutExtended;
@@ -59,9 +57,12 @@ private:
   ComPtr<IDWriteFactory>       m_dWriteFactory;
   ComPtr<IDWriteTextFormat>    m_textFormat;
 
-  Model m_model = {};
+  Model m_model      = {};
+  Model m_worldModel = {};
 
+  void initResources();
   void initUi();
   void clear();
   void updateViewMatrix();
+  void renderUi();
 };

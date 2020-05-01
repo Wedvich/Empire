@@ -119,6 +119,7 @@
     <ClInclude Include="src\components\component.h" />
     <ClInclude Include="src\components\transform.h" />
     <ClInclude Include="src\constants.h" />
+    <ClInclude Include="src\data\temp_model_data.h" />
     <ClInclude Include="src\entities\entity.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\cube.h" />
