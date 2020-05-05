@@ -1,3 +1,6 @@
 [submodule "lib/gsl"]
 	path = lib/gsl
 	url = https://github.com/Microsoft/GSL.git
+[submodule "lib/DirectXTK"]
+	path = lib/DirectXTK
+	url = git@github.com:microsoft/DirectXTK.git

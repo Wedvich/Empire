@@ -1,61 +1,59 @@
 #pragma once
 
-#include "renderer\vertex_types.h"
-
 struct Room {
   const VertexPositionColor vertices[12] = {
       // x+
       {
           DirectX::XMFLOAT3(-3.0f, -3.0f, -3.0f),
-          DirectX::XMFLOAT3(1, 0, 0),
+          DirectX::XMFLOAT4(1, 0, 0, 1),
       },
       {
           DirectX::XMFLOAT3(-3.0f, 3.0f, -3.0f),
-          DirectX::XMFLOAT3(1, 0, 0),
+          DirectX::XMFLOAT4(1, 0, 0, 1),
       },
       {
           DirectX::XMFLOAT3(-3.0f, -3.0f, 3.0f),
-          DirectX::XMFLOAT3(1, 0, 0),
+          DirectX::XMFLOAT4(1, 0, 0, 1),
       },
       {
           DirectX::XMFLOAT3(-3.0f, 3.0f, 3.0f),
-          DirectX::XMFLOAT3(1, 0, 0),
+          DirectX::XMFLOAT4(1, 0, 0, 1),
       },
 
       // y-
       {
           DirectX::XMFLOAT3(-3.0f, -3.0f, -3.0f),
-          DirectX::XMFLOAT3(1, 1, 1),
+          DirectX::XMFLOAT4(1, 1, 1, 1),
       },
       {
           DirectX::XMFLOAT3(-3.0f, -3.0f, 3.0f),
-          DirectX::XMFLOAT3(1, 1, 1),
+          DirectX::XMFLOAT4(1, 1, 1, 1),
       },
       {
           DirectX::XMFLOAT3(3.0f, -3.0f, -3.0f),
-          DirectX::XMFLOAT3(1, 1, 1),
+          DirectX::XMFLOAT4(1, 1, 1, 1),
       },
       {
           DirectX::XMFLOAT3(3.0f, -3.0f, 3.0f),
-          DirectX::XMFLOAT3(1, 1, 1),
+          DirectX::XMFLOAT4(1, 1, 1, 1),
       },
 
       // x+
       {
           DirectX::XMFLOAT3(3.0f, -3.0f, -3.0f),
-          DirectX::XMFLOAT3(0, 1, 0),
+          DirectX::XMFLOAT4(0, 1, 0, 1),
       },
       {
           DirectX::XMFLOAT3(3.0f, -3.0f, 3.0f),
-          DirectX::XMFLOAT3(0, 1, 0),
+          DirectX::XMFLOAT4(0, 1, 0, 1),
       },
       {
           DirectX::XMFLOAT3(3.0f, 3.0f, -3.0f),
-          DirectX::XMFLOAT3(0, 1, 0),
+          DirectX::XMFLOAT4(0, 1, 0, 1),
       },
       {
           DirectX::XMFLOAT3(3.0f, 3.0f, 3.0f),
-          DirectX::XMFLOAT3(0, 1, 0),
+          DirectX::XMFLOAT4(0, 1, 0, 1),
       },
   };
 

@@ -27,7 +27,6 @@
     <ClInclude Include="src\renderer\transform_proxy.h" />
     <ClInclude Include="src\utils\transform.h" />
     <ClInclude Include="src\renderer\model.h" />
-    <ClInclude Include="src\renderer\vertex_types.h" />
     <ClInclude Include="src\input\input_mapper.h" />
     <ClInclude Include="src\input\input_context.h" />
     <ClInclude Include="src\input\input_constants.h" />

@@ -27,6 +27,8 @@
 #include <dwrite.h>
 #include <dxgi1_5.h>
 
+#include <DirectXTK/Inc/VertexTypes.h>
+
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")

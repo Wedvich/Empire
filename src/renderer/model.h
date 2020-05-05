@@ -1,7 +1,6 @@
 #pragma once
 
 #include "transform_proxy.h"
-#include "vertex_types.h"
 
 class Model {
 public:

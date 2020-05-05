@@ -70,7 +70,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(ProjectDir)src\;$(ProjectDir)lib\gsl\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\;$(ProjectDir)lib\;$(ProjectDir)lib\gsl\include\;$(ProjectDir)lib\DirectXTK\Inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
@@ -91,7 +91,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(ProjectDir)src\;$(ProjectDir)lib\gsl\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)src\;$(ProjectDir)lib\;$(ProjectDir)lib\gsl\include\;$(ProjectDir)lib\DirectXTK\Inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnablePREfast>true</EnablePREfast>
     </ClCompile>
     <Link>
@@ -132,7 +132,6 @@
     <ClInclude Include="src\renderer\renderer.h" />
     <ClInclude Include="src\game_window.h" />
     <ClInclude Include="src\renderer\transform_proxy.h" />
-    <ClInclude Include="src\renderer\vertex_types.h" />
     <ClInclude Include="src\systems\system.h" />
     <ClInclude Include="src\utils\transform.h" />
     <ClInclude Include="src\world.h" />

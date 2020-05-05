@@ -8,7 +8,7 @@ cbuffer ModelViewProjectionConstantBuffer : register(b0) {
 
 struct VS_INPUT {
   float3 position : POSITION;
-  float3 color : COLOR0;
+  float4 color : COLOR0;
 };
 
 struct VS_OUTPUT  {
@@ -25,8 +25,7 @@ VS_OUTPUT main(VS_INPUT input) {
   position = mul(position, projection);
   output.position = position;
 
-  float4 color = float4(input.color, 1.0f);
-  output.color = color;
+  output.color = input.color;
 
   return output;
 }
